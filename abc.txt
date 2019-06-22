@@ -1,0 +1,51 @@
+CI/CD:
+------------
+Regular Build ---If succeded then
+-------------------------------------------
+UAT Pipeline Build-- changeticket.out, udeploylabel.out
+(adding 3 more steps along with normal steps
+Export uDeploy Label as Artifact --echo %env.uDeployLabel% > udeploylabel.out
+Inject Change Ticket to Pipeline--echo %ChangeTicket% > changeticket.out
+Tagging- tagging buils.ps1 -buildId %teamcity.build.id% -username %tagging_user% -password %tagging_pwd% -URL %Teamcity_URL% -Tag %Tag_name%
+)
+----------------------------------------------------------
+Auto Deployments :: Auto deployments DIT
+(triggered-Finished build [CSI: 35687] SS_Files(AFRD) :: SS_AFRD(UAT Pipeline),)
+(taking the artifact depedencies from Pipeline tagged preveious build [CSI: 35687] SS_Files(AFRD) :: SS_AFRD(UAT Pipeline), udeploylabel.out changeticket.out)
+(Read udeployLabel $lbl=gc ./udeploylabel.out-echo "##teamcity[setParameter name='env.uDeployLabel' value='$lbl']", Deploy to DIT python autoDeploy-pipeline.py "Payments - State Street Cash Manager" %ComponentProcessStep% "DIT" %uDeploy_Username% %udeploy_pwd% %env.uDeployLabel% %ComponentName% %changenumber% %receiveremail%, Add Delay Write-Host "Waiting for few seconds .. "- Start-Sleep -Seconds 5, Tagging -buildId %teamcity.build.id% -username %tagging_user% -password %tagging_pwd% -URL %Teamcity_URL% -Tag %Tag_name%)
+---------------------------------------------------------------------------------------------------------
+[CSI: 35687] BE1.3 ABW :: Automated Tests :: DIT :: Validation
+(triggered-Finished build [CSI: 35687] SS_Files(AFRD) :: Auto Deployments :: Auto deployments DIT)
+(no dependencies)
+(Run Test(Maven clean Test), Gating Test (Global Payment/GatingJunitReport/MultipleJunitReport.ps1, -xml "%Gating_CDBE%" -percent 30),Kill Stale Objects (TASKKILL /F /IM IEDriverServer.exe
+TASKKILL /F /IM chromedriver.exe
+TASKKILL /F /IM chrome.exe
+TASKKILL /F /IM iexplore.exe
+IF %%ERRORLEVEL%% EQU 128 (
+   ECHO No errors occurred, There was no Driver EXE stale.
+  EXIT 0
+)))
+----------------------------------------------------------------------------
+Automatic Deployment-Gate : SIT Deployment (Auxillary Build) New
+(triggered-Finished build [CSI: 35687] BE1.3 ABW :: Automated Tests :: DIT :: Validation)
+(taking the artifact depedencies from Pipeline tagged preveious build [CSI: 35687] BE1.3 ABW :: Automatic Deployment :: Automatic Deployment DIT, changeticket.out)
+(checking sonar result -Method GET -ProjectKey %SonarProjectKey%, check test builds -userid %APIUSER% -password %APIPassword% -buildTypeID %TestBuilds%, Print uDeploy Label Write-Host %env.uDeployLabel%=%dep.icg_Tts_35687_Csi35687be13abw_AutomaticDeployment_AutomaticDeployment.env.uDeployLabel%, Tagging -buildId %teamcity.build.id% -username %tagging_user% -password %tagging_pwd% -URL %Teamcity_URL% -Tag %Tag_name%)
+------------------------------------------------------------
+Automatic Deployment - SIT5
+(triggered-Finished build [CSI: 35687] BE1.3 ABW :: Automatic Deployment :: Gate : SIT Deployment (Auxillary Build) New)
+(taking the artifact depedencies from Pipeline tagged preveious build [CSI: 35687] BE1.3 ABW :: Automatic Deployment :: Gate : SIT Deployment (Auxillary Build) New, changeticket.out)
+("python autoDeploy-pipeline.py "%uDeploy_Application_name%" %ComponentProcessStep% "%uDeploy_environment%" %uDeploy_Username% %udeploy_pwd% %env.uDeployLabel% %ComponentName% %changenumber% %receiveremail%", Add delay(Write-Host "Waiting for few seconds .. ",Start-Sleep -Seconds 5), Tagging -buildId %teamcity.build.id% -username %tagging_user% -password %tagging_pwd% -URL %Teamcity_URL% -Tag %Tag_name%)
+--------------------------------------------
+Automated Tests-8.1-SIT-Acceptence Test-Execute Test
+(triggered [CSI: 35687] BE1.3 ABW :: Automatic Deployment :: Automatic Deployment - SIT5)
+(Added maven step or XML Report processing in build features)
+----------------------------------------------------------------
+Gate : UAT Deployment (Auxillary Build):
+(triggered-Finished build [CSI: 35687] BE1.3 ABW :: Automated Tests :: 8.1 :: SIT :: Functional Test :: Execute Test)
+(taking the artifact depedencies from Pipeline tagged preveious build [CSI: 35687] BE1.3 ABW :: Automatic Deployment :: Automatic Deployment - SIT5, changeticket.out)
+(-userid %APIUSER% -password %APIPassword% -buildTypeID %TestBuilds%,  Print udeploy label Write-Host %env.uDeployLabel%, Taggeing the build -buildId %teamcity.build.id% -username %tagging_user% -password %tagging_pwd% -URL %Teamcity_URL% -Tag %Tag_name%)
+-----------------------------------------------------------
+Automatic Deployment - UAT:
+(triggered-scheduled trigger(based on time it will enabled and triggered)
+(taking the artifact depedencies from preveious build [CSI: 35687] BE1.3 ABW :: Automatic Deployment :: Gate : UAT Deployment (Auxillary Build))
+(assaign change ticket to parameter, "python autoDeploy-pipeline.py "%uDeploy_Application_name%" %ComponentProcessStep% "%uDeploy_environment%" %uDeploy_Username% %udeploy_pwd% %env.uDeployLabel% %ComponentName% %changenumber% %receiveremail%", Print deployed label(Write-host %env.uDeployLabel%))
