@@ -1,0 +1,34 @@
+
+Worked in Zen3 Info solution from Jul 2013 – Mar 2016.
+
+Worked in Wave Infosoft Pvt Ltd from Mar 2016 – June 2018.
+
+Working in Larsen & Toubro Infotech from June 2018 – tilldate.
+
+Project#1
+
+Client		        : Citi Bank
+Project	        : Treasuary & Trades Solutions
+Duration	        : June 2018 – till now
+Role		        : DevOps Engineer
+Environment	        : Bitbucket, Teamcity, Maven, ANT, JFrog, uDeploy, SonarQube, Docker, Openshift
+
+Project Description:   
+Citi, the leading global financial services company, has approximately 200 million customer accounts and does business in more than 160 countries and jurisdictions .Citi’s Treasury and Trade Solutions (TTS) business provides integrated cash management and trade finance services to multinational corporations, financial institutions and public sector organizations across the globe With the industry’s most comprehensive suite of digital and mobile-enabled platforms, tools and analytics, TTS leads the way in delivering innovative and tailored solutions to its clients Offerings include cash management, payments, receivables, liquidity management and investment services, working capital solutions, commercial and prepaid card programs, and trade finance
+Roles and Responsibilities:
+
+●	Software Configuration management (Automate CI & CD pipeline using uDeploy, Maven, Teamcity & Bitbucket).
+●	Responsible for tagging and maintain code on version control GIT.
+●	Perform Build activities using Maven and Teamcity tool.
+●	Responsible for creating Builds and Deployments Planes.
+●	Creating War / Ear files using Maven. 
+●	Set up the jFrog Repository for deploy the artifacts.
+●	Configured the code scan and code coverage in Teamcity by using sonarqube plugin
+●	Set up uDeploy configuration in Teamcity to push artifacts
+●	Configured Teamcity Jobs, install plugins for generating Project artifacts.
+●	Automate the build Process Using Teamcity jobs.
+●	Creating uDeploy Processes in uDeploy for configuration and Deployment activities.
+●	Perform Deployment of War files in application servers using uDeploy.
+●	Verify Deployments logs to check for successful deployments.
+●	Perform deployments to multiple environments like Dev, QA, and UAT environments
+●	Resolving the ServiceNow tickets for different environments of DevOps for all the projects.
