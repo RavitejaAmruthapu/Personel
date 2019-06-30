@@ -12,3 +12,5 @@ $credential = New-Object System.Management.Automation.PSCredential $username, $s
 $args = "C:\Users\User\Desktop\Script.ps1"
 Start-Process powershell.exe -Credential $Credential -ArgumentList ("-file $args")
 Start-Process powershell.exe -Credential $Credential -WindowStyle Maximized -ArgumentList ("-file $args")
+
+Start-Process powershell.exe -Credential $Credential -Verb RunAs -WindowStyle Maximized -ArgumentList "C:\Users\User\Desktop\Script.ps1"
