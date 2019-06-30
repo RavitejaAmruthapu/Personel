@@ -17,3 +17,9 @@ Start-Process powershell.exe -Credential $Credential -Verb RunAs -WindowStyle Ma
 
 Start-Process powershell.exe -Credential $Credential -Verb RunAs -WindowStyle Maximized -ArgumentList "E:\Devops\DACPAC-POC2\Untitled1.ps1"
 C:\Users\Teja\Desktop\Deploy-updated_connectionString.ps1
+
+$username ="RAVITEJA\Teja"
+$password ="Teja*101"
+$securePassword = ConvertTo-SecureString $password -AsPlainText -Force
+$credential = New-Object System.Management.Automation.PSCredential $username, $securePassword
+Start-Process powershell.exe -Credential $Credential -ArgumentList "C:\Users\Teja\Desktop\Deploy-updated_connectionString.ps1"
