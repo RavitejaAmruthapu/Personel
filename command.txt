@@ -3,3 +3,12 @@ $password = 'Teja*101'
 $securePassword = ConvertTo-SecureString $password -AsPlainText -Force
 $credential = New-Object System.Management.Automation.PSCredential $username, $securePassword
 Start-Process -FilePath "powershell" -Credential $credential
+
+
+$username = 'RAVITEJA\Teja'
+$password = 'Teja*101'
+$securePassword = ConvertTo-SecureString $password -AsPlainText -Force
+$credential = New-Object System.Management.Automation.PSCredential $username, $securePassword
+$args = "C:\Users\User\Desktop\Script.ps1"
+Start-Process powershell.exe -Credential $Credential -ArgumentList ("-file $args")
+Start-Process powershell.exe -Credential $Credential -WindowStyle Maximized -ArgumentList ("-file $args")
