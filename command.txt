@@ -1,0 +1,5 @@
+$username = 'RAVITEJA\Teja'
+$password = 'Teja*101'
+$securePassword = ConvertTo-SecureString $password -AsPlainText -Force
+$credential = New-Object System.Management.Automation.PSCredential $username, $securePassword
+Start-Process -FilePath "powershell" -Credential $credential
