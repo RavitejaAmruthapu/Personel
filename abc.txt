@@ -49,3 +49,17 @@ Automatic Deployment - UAT:
 (triggered-scheduled trigger(based on time it will enabled and triggered)
 (taking the artifact depedencies from preveious build [CSI: 35687] BE1.3 ABW :: Automatic Deployment :: Gate : UAT Deployment (Auxillary Build))
 (assaign change ticket to parameter, "python autoDeploy-pipeline.py "%uDeploy_Application_name%" %ComponentProcessStep% "%uDeploy_environment%" %uDeploy_Username% %udeploy_pwd% %env.uDeployLabel% %ComponentName% %changenumber% %receiveremail%", Print deployed label(Write-host %env.uDeployLabel%))
+
+
+Hi,
+
+As part of DACPAC POC, We have tested in our SQL server by providing db_creator or db_owner permission to FID icg_tts_uat and deployment got succeeded.
+
+we were facing permission issues while performing the deployment in TVLM UAT2 server. While deploying DAC package, It generates ALTER DATABASE statement and performs operations on Database level which is not allowing. To perform the deployment, FID udeploy_autoinstall should have db_creator or db_owner permission to deploy DACPAC.
+
+Recommendations:
+1) cyber ark FID should have db_creator or db_owner permission to deploy DACPAC in target sql server
+2) we need to close the DACPAC POC
+
+Thanks & Regards,
+Ravitheja
