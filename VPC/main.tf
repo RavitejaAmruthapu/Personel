@@ -1,5 +1,3 @@
-#set AWS_ACCESS_KEY_ID=AKIAXXF2VAJ5E3QZHP4O
-#set AWS_SECRET_ACCESS_KEY=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
 terraform {
   required_version = ">= 0.12"
 }
