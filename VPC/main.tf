@@ -1,3 +1,5 @@
+#set AWS_ACCESS_KEY_ID=AKIAXXF2VAJ5E3QZHP4O
+#set AWS_SECRET_ACCESS_KEY=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
 terraform {
   required_version = ">= 0.12"
 }
@@ -71,7 +73,7 @@ resource "aws_route_table_association" "rt_association_pub" {
 resource "aws_route_table" "rt_pvt" {
   vpc_id = "${aws_vpc.vpc.id}"
   route {
-    cidr_block = "10.0.1.0/24"
+    cidr_block = "0.0.0.0/0"
     gateway_id = "${aws_nat_gateway.nat_gw.id}"
   }
   tags = {
@@ -123,8 +125,8 @@ resource "aws_security_group" "sg_pvt" {
 
   ingress {
     from_port   = 0
-    to_port     = 65535
-    protocol    = "tcp"
+    to_port     = 0
+    protocol    = "-1"
 	security_groups = [ "${aws_security_group.sg_public.id}" ]
   }  
 }
@@ -136,7 +138,6 @@ resource "aws_instance" "ec2_public" {
   subnet_id		= "${aws_subnet.subnet_pub.id}"
   vpc_security_group_ids = ["${aws_security_group.sg_public.id}"]
   associate_public_ip_address = true
-  source_dest_check = false
   tags = {
     Name = "terraform_ec2_pub"
   }
@@ -148,7 +149,6 @@ resource "aws_instance" "ec2_pvt" {
   subnet_id		= "${aws_subnet.subnet_pvt.id}"
   vpc_security_group_ids = ["${aws_security_group.sg_pvt.id}"]
   associate_public_ip_address = false
-  source_dest_check = false
   tags = {
     Name = "terraform_ec2_pvt"
   }
