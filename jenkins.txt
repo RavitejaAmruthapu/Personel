@@ -75,3 +75,5 @@ source /etc/profile
 -Dsonar.projectKey=Codecoverage1 -Dsonar.projectName=CodeCoverage -Dsonar.projectVersion=1.0 -X -Dsonar.java.binaries=. -Dsonar.jacoco.reportPath=<path/of/jobof jenkins>/tests/target/jacoco.exec -Dsonar.junit.reportsPath=<path/of/jobof jenkins>/tests/target/surefire-reports
 
 docker run -it -p 8080:8080 -v /var/run/docker.sock:/var/run/docker.sock raviteja101/jenkins:latest bash
+source /etc/profile
+service jenkins start
