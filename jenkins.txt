@@ -35,3 +35,43 @@ apt-get install jenkins -y
 dpkg -l | grep systemd
 apt-get install --reinstall systemd -y
 dpkg -L systemd
+-----------------------------------------------------------
+
+wget --user=ateja0@gmail.com --password=Welcome https://download.oracle.com/otn/java/jdk/8u221-b11/230deb18db3e4014bb8e3e8324f81b43/jdk-8u221-linux-x64.tar.gz
+
+docker run -it -p 8080:8080 -v /var/run/docker.sock:/var/run/docker.sock -v /root:/root ubuntu:latest sh -c "apt-get update ; apt-get install docker.io -y ; bash"
+
+vi /etc/environment
+--------------------
+PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/jvm/jdk1.
+8.0_221/bin:/usr/lib/jvm/jdk1.8.0_221/db/bin:/usr/lib/jvm/jdk1.8.0_221/jre/bin"
+J2SDKDIR="/usr/lib/jvm/jdk1.8.0_151"
+J2REDIR="/usr/lib/jvm/jdk1.8.0_151/jre"
+JAVA_HOME="/usr/lib/jvm/jdk1.8.0_151"
+DERBY_HOME="/usr/lib/jvm/jdk1.8.0_151/db"
+
+
+update-alternatives --install "/usr/bin/java" "java" "/usr/lib/jvm/jdk1.8.0_221/bin/java" 0
+update-alternatives --install "/usr/bin/javac" "javac" "/usr/lib/jvm/jdk1.8.0_221/bin/javac" 0
+update-alternatives --set java /usr/lib/jvm/jdk1.8.0_221/bin/java
+update-alternatives --set javac /usr/lib/jvm/jdk1.8.0_221/bin/javac
+
+update-alternatives --list java
+update-alternatives --list javac
+
+vi /etc/profiles
+-----------------
+add below line at the end
+
+export JAVA_HOME=/usr/lib/jvm/jdk1.8.0_221
+PATH=$PATH:$HOME/bin:$JAVA_HOME/bin
+export JAVA_HOME
+export PATH
+-----------------------
+source /etc/profile
+---------------------
+<path/of/jobof jenkins>module1/target/jacoco.exec
+
+-Dsonar.projectKey=Codecoverage1 -Dsonar.projectName=CodeCoverage -Dsonar.projectVersion=1.0 -X -Dsonar.java.binaries=. -Dsonar.jacoco.reportPath=<path/of/jobof jenkins>/tests/target/jacoco.exec -Dsonar.junit.reportsPath=<path/of/jobof jenkins>/tests/target/surefire-reports
+
+docker run -it -p 8080:8080 -v /var/run/docker.sock:/var/run/docker.sock raviteja101/jenkins:latest bash
