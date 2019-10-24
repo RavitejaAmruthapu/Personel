@@ -1,0 +1,10 @@
+apiversion: v1
+kind: Pod
+metadata:
+  name: abc
+  namespace: kube-system
+spec:
+  -name: pod1
+   image: ngnix
+   ports:
+     -containerport: 80

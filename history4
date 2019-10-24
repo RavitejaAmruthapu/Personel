@@ -1,0 +1,56 @@
+    1  kubeadm token create --print-join-command
+    2  kubectl get nodes
+    3  kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/bc79dd1505b0c8681ece4de4c0d86c5cd2643275/Documentation/kube-flannel.yml
+    4  kubectl get nodes
+    5  kubectl label node ip-172-31-14-48 node-role.kubernetes.io/worker=worker1
+    6  kubectl get nodes
+    7  kubectl get nodes -o wide --show-labels
+    8  kubeadm tokens list
+    9  kubeadm token list
+   10  kubectl describe node node1
+   11  kubectl describe node worker1
+   12  kubectl get node
+   13  kubectl get nodes -o wide --show-labels
+   14  kubectl describe node ip-172-31-13-169
+   15  kubectl get services
+   16  kubectl get pods
+   17  curl -k https://10.96.0.1
+   18  kubectl get namespaces
+   19  kubectl describe ns kube-system
+   20  kubectl create namespace test
+   21  sudo apt-get install git
+   22  git
+   23  hostory
+   24  history
+   25  history >hostory1
+   26  cat hostory1 
+   27  git clone https://github.com/RavitejaAmruthapu/Personel.git
+   28  ls -l
+   29  cd Personel/
+   30  cat history1
+   31  history>history1
+   32  ls -l
+   33  kubectl get pods -n kube-system
+   34  kubectl get pods --all-namespaces
+   35  git add .
+   36  git commit -m "history files"
+   37  git push origin master
+   38  kubectl create deployment pod2 -imgae=nginx
+   39  kubectl create deployment pod2 --imgae=nginx
+   40  kubectl create deployment my-dep --image=busybox
+   41  kubectl create deployment pod2 --image=nginx
+   42  kubectl get pods
+   43  vi 1.yaml
+   44  kubectl apply -f 1.yaml 
+   45  cat 1.yaml 
+   46  https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#apply
+   47  https://github.com/kubernetes/kops/blob/master/README.md
+   48  history>history3
+   49  git status
+   50  git add .
+   51  kubetl get pods
+   52  kubectl get pods
+   53  kubectl exec -it pod2-f5c94d79c-bsq2v sh
+   54  kubectl get pods
+   55  kubectl get services
+   56  history>history4
