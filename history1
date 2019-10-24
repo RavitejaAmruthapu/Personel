@@ -1,0 +1,31 @@
+    1  kubeadm token create --print-join-command
+    2  kubectl get nodes
+    3  kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/bc79dd1505b0c8681ece4de4c0d86c5cd2643275/Documentation/kube-flannel.yml
+    4  kubectl get nodes
+    5  kubectl label node ip-172-31-14-48 node-role.kubernetes.io/worker=worker1
+    6  kubectl get nodes
+    7  kubectl get nodes -o wide --show-labels
+    8  kubeadm tokens list
+    9  kubeadm token list
+   10  kubectl describe node node1
+   11  kubectl describe node worker1
+   12  kubectl get node
+   13  kubectl get nodes -o wide --show-labels
+   14  kubectl describe node ip-172-31-13-169
+   15  kubectl get services
+   16  kubectl get pods
+   17  curl -k https://10.96.0.1
+   18  kubectl get namespaces
+   19  kubectl describe ns kube-system
+   20  kubectl create namespace test
+   21  sudo apt-get install git
+   22  git
+   23  hostory
+   24  history
+   25  history >hostory1
+   26  cat hostory1 
+   27  git clone https://github.com/RavitejaAmruthapu/Personel.git
+   28  ls -l
+   29  cd Personel/
+   30  cat history1
+   31  history>history1
