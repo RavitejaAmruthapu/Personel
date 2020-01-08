@@ -1,0 +1,5 @@
+FROM raviteja101/jenkins-agent
+COPY runDocker.sh /home/jenkins
+RUN chmod 777 /home/jenkins/runDocker.sh
+USER jenkins
+CMD ["bash", "/home/jenkins/runDocker.sh"]
