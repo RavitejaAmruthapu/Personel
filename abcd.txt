@@ -32,3 +32,6 @@ Roles and Responsibilities:
 ●	Verify Deployments logs to check for successful deployments.
 ●	Perform deployments to multiple environments like Dev, QA, and UAT environments
 ●	Resolving the ServiceNow tickets for different environments of DevOps for all the projects.
+
+
+https://www.amazon.in/Storite-HDMI-Male-VGA-Cable/dp/B082NW3JSD/ref=sr_1_70?crid=3MY5RUAOC2HFJ&keywords=vga+male+to+hdmi+cable+for+laptop+to+tv&qid=1580283458&sprefix=vga+male+to+hdmi+cable%2Caps%2C391&sr=8-70
