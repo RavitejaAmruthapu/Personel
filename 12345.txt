@@ -1,0 +1,397 @@
+
+Add Permission to FID and Create Pull Secret
+#Permission FID to Artifact Repository
+
+curl -XGET "http://earswebservices.nam.nsroot.net:8080/ear-web-services/UpdatePermissionTarget?name="${p:DOCKER_REPOSITORY}"&userSOEId=${p:OPENSHIFT_FID}&permissions=r&permissionAction=Add&orderNumber=${p:request.id}&productName=UCD&approverSOEIds=${p:request.user.name}" -k 
+
+
+#Create Pull secret and add to sa/default account
+
+${p:OPENSHIFT_VERSION} login ${p:OPENSHIFT_URL} -u ${p:OPENSHIFT_FID} -p "${p:OPENSHIFT_FID_PASSWORD}" --insecure-skip-tls-verify=true
+
+${p:OPENSHIFT_VERSION} project ${p:OPENSHIFT_PROJECT_NAME}
+
+Doc_Reg=`echo ${p:DOCKER_REPOSITORY} |cut -d/ -f 1`.artifactrepository.citigroup.net
+
+${p:OPENSHIFT_VERSION} secrets new-dockercfg ${p:OPENSHIFT_PROJECT_NAME}-$Doc_Reg --docker-server=$Doc_Reg --docker-username=${p:OPENSHIFT_FID} --docker-password=${p:OPENSHIFT_FID_PASSWORD} --docker-email=dummy@citi.com
+${p:OPENSHIFT_VERSION} secrets add sa/default secrets/${p:OPENSHIFT_PROJECT_NAME}-$Doc_Reg --for=pull
+${p:OPENSHIFT_VERSION} logout
+***********************************************************************
+output:
+
+#Permission FID to Artifact Repository
+ 
+curl -XGET "http://earswebservices.nam.nsroot.net:8080/ear-web-services/UpdatePermissionTarget?name="docker-icg-prod-local.artifactrepository.citigroup.net/tts-citidirect-35687"&userSOEId=35687_ucd_prod&permissions=r&permissionAction=Add&orderNumber=16ffe329-58c9-d0d8-a6ab-9e9186fd8ebf&productName=UCD&approverSOEIds=icg_tts_prod" -k 
+ 
+ 
+#Create Pull secret and add to sa/default account
+ 
+oc -n=icg-tts-citidirect-35687 --config="/home/udeployha/.kube/icg-tts-cd-microservice-metis-admin-panel-openshift_config" login https://namicgswd11p-webapi.nam.nsroot.net:8443 -u 35687_ucd_prod -p "****" --insecure-skip-tls-verify=true
+ 
+oc -n=icg-tts-citidirect-35687 --config="/home/udeployha/.kube/icg-tts-cd-microservice-metis-admin-panel-openshift_config" project icg-tts-citidirect-35687
+ 
+Doc_Reg=`echo docker-icg-prod-local.artifactrepository.citigroup.net/tts-citidirect-35687 |cut -d/ -f 1`.artifactrepository.citigroup.net
+ 
+oc -n=icg-tts-citidirect-35687 --config="/home/udeployha/.kube/icg-tts-cd-microservice-metis-admin-panel-openshift_config" secrets new-dockercfg icg-tts-citidirect-35687-$Doc_Reg --docker-server=$Doc_Reg --docker-username=35687_ucd_prod --docker-password=**** --docker-email=dummy@citi.com
+oc -n=icg-tts-citidirect-35687 --config="/home/udeployha/.kube/icg-tts-cd-microservice-metis-admin-panel-openshift_config" secrets add sa/default secrets/icg-tts-citidirect-35687-$Doc_Reg --for=pull
+oc -n=icg-tts-citidirect-35687 --config="/home/udeployha/.kube/icg-tts-cd-microservice-metis-admin-panel-openshift_config" logout
+ 
+-------------------------------
+working directory: /opt/udeployha/agent/var/work/icg-tts-cd-microservice-metis-admin-panel-openshift
+===============================
+command output: 
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+ 
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+101   304    0   304    0     0    438      0 --:--:-- --:--:-- --:--:--   491
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+ 
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0{"status":false,"statusDescription":"Error in updatePermissionTarget: Error in updatePermissionTarget: Error calling api\nIn updatePermissionTarget: repositoryName=docker-icg-prod-local.artifactrepository.citigroup.net/tts-citidirect-35687, userSoeId=35687_ucd_prod, permissions=r, permissionAction=Add"}Login successful.
+ 
+You have one project on this server: "icg-tts-citidirect-35687"
+ 
+Using project "icg-tts-citidirect-35687".
+Already on project "icg-tts-citidirect-35687" on server "https://namicgswd11p-webapi.nam.nsroot.net:8443".
+Command "new-dockercfg" is deprecated, use oc create secret
+Error from server (AlreadyExists): secrets "icg-tts-citidirect-35687-docker-icg-prod-local.artifactrepository.citigroup.net.artifactrepository.citigroup.net" already exists
+Logged "35687_ucd_prod" out on "https://namicgswd11p-webapi.nam.nsroot.net:8443"
+===============================
+command exit code: 0
+ 
+===========================================================================================================
+Create Config Maps
+
+${p:OPENSHIFT_VERSION} login ${p:OPENSHIFT_URL} -u=${p:OPENSHIFT_FID} -p=${p:OPENSHIFT_FID_PASSWORD} --insecure-skip-tls-verify=true
+
+${p:OPENSHIFT_VERSION} project ${p:OPENSHIFT_PROJECT_NAME}
+
+for folder in `ls ConfigMaps`
+do
+if [ $folder == "AppConfig" ]
+then
+	echo "Creating Config Maps for $folder"
+	${p:OPENSHIFT_VERSION} delete configmap ${p:OPENSHIFT_APP_NAME}-appconfig --ignore-not-found
+	if [ -d "ConfigMaps/$folder/${p:ENV.CATEGORY}" ]
+	then		
+		echo "check create config map --from-file=ConfigMaps/$folder/${p:ENV.CATEGORY}"
+		${p:OPENSHIFT_VERSION} create configmap ${p:OPENSHIFT_APP_NAME}-appconfig --from-file=ConfigMaps/$folder/${p:ENV.CATEGORY}
+	else
+		echo "check create config map --from-file=ConfigMaps/$folder"
+		${p:OPENSHIFT_VERSION} create configmap ${p:OPENSHIFT_APP_NAME}-appconfig --from-file=ConfigMaps/$folder
+	fi
+elif [ $folder == "AOConfig" ]
+then
+	echo "Creating Config Maps for $folder"
+	${p:OPENSHIFT_VERSION} delete configmap ${p:OPENSHIFT_APP_NAME}-aoconfig --ignore-not-found
+	if [ -d "ConfigMaps/$folder/${p:ENV.CATEGORY}" ]
+	then
+		echo "check create config map --from-file=ConfigMaps/$folder/${p:ENV.CATEGORY}"
+		${p:OPENSHIFT_VERSION} create configmap ${p:OPENSHIFT_APP_NAME}-aoconfig --from-file=ConfigMaps/$folder/${p:ENV.CATEGORY}
+	else
+		echo "check create config map --from-file=ConfigMaps/$folder"
+		${p:OPENSHIFT_VERSION} create configmap ${p:OPENSHIFT_APP_NAME}-aoconfig --from-file=ConfigMaps/$folder
+	fi
+elif [ $folder == "MiddlewareConfig" ]
+then
+	echo "Creating Config Maps for $folder"
+	${p:OPENSHIFT_VERSION} delete configmap ${p:OPENSHIFT_APP_NAME}-middlewareconfig --ignore-not-found
+	if [ -d "ConfigMaps/$folder/${p:ENV.CATEGORY}" ]
+	then
+		echo "check create config map --from-file=ConfigMaps/$folder/${p:ENV.CATEGORY}"
+		${p:OPENSHIFT_VERSION} create configmap ${p:OPENSHIFT_APP_NAME}-middlewareconfig --from-file=ConfigMaps/$folder/${p:ENV.CATEGORY}
+	else
+		echo "check create config map --from-file=ConfigMaps/$folder"
+		${p:OPENSHIFT_VERSION} create configmap ${p:OPENSHIFT_APP_NAME}-middlewareconfig --from-file=ConfigMaps/$folder
+	fi
+else 
+echo "No Config Maps folder exist, exit 1"
+fi
+done
+********************************************************************
+output:
+
+oc -n=icg-tts-citidirect-35687 --config="/home/udeployha/.kube/icg-tts-cd-microservice-metis-admin-panel-openshift_config" login https://namicgswd11p-webapi.nam.nsroot.net:8443 -u=35687_ucd_prod -p=**** --insecure-skip-tls-verify=true
+ 
+oc -n=icg-tts-citidirect-35687 --config="/home/udeployha/.kube/icg-tts-cd-microservice-metis-admin-panel-openshift_config" project icg-tts-citidirect-35687
+ 
+for folder in `ls ConfigMaps`
+do
+if [ $folder == "AppConfig" ]
+then
+	echo "Creating Config Maps for $folder"
+	oc -n=icg-tts-citidirect-35687 --config="/home/udeployha/.kube/icg-tts-cd-microservice-metis-admin-panel-openshift_config" delete configmap icg-tts-cd-microservice-metis-admin-panel-openshift-appconfig --ignore-not-found
+	if [ -d "ConfigMaps/$folder/COB" ]
+	then		
+		echo "check create config map --from-file=ConfigMaps/$folder/COB"
+		oc -n=icg-tts-citidirect-35687 --config="/home/udeployha/.kube/icg-tts-cd-microservice-metis-admin-panel-openshift_config" create configmap icg-tts-cd-microservice-metis-admin-panel-openshift-appconfig --from-file=ConfigMaps/$folder/COB
+	else
+		echo "check create config map --from-file=ConfigMaps/$folder"
+		oc -n=icg-tts-citidirect-35687 --config="/home/udeployha/.kube/icg-tts-cd-microservice-metis-admin-panel-openshift_config" create configmap icg-tts-cd-microservice-metis-admin-panel-openshift-appconfig --from-file=ConfigMaps/$folder
+	fi
+elif [ $folder == "AOConfig" ]
+then
+	echo "Creating Config Maps for $folder"
+	oc -n=icg-tts-citidirect-35687 --config="/home/udeployha/.kube/icg-tts-cd-microservice-metis-admin-panel-openshift_config" delete configmap icg-tts-cd-microservice-metis-admin-panel-openshift-aoconfig --ignore-not-found
+	if [ -d "ConfigMaps/$folder/COB" ]
+	then
+		echo "check create config map --from-file=ConfigMaps/$folder/COB"
+		oc -n=icg-tts-citidirect-35687 --config="/home/udeployha/.kube/icg-tts-cd-microservice-metis-admin-panel-openshift_config" create configmap icg-tts-cd-microservice-metis-admin-panel-openshift-aoconfig --from-file=ConfigMaps/$folder/COB
+	else
+		echo "check create config map --from-file=ConfigMaps/$folder"
+		oc -n=icg-tts-citidirect-35687 --config="/home/udeployha/.kube/icg-tts-cd-microservice-metis-admin-panel-openshift_config" create configmap icg-tts-cd-microservice-metis-admin-panel-openshift-aoconfig --from-file=ConfigMaps/$folder
+	fi
+elif [ $folder == "MiddlewareConfig" ]
+then
+	echo "Creating Config Maps for $folder"
+	oc -n=icg-tts-citidirect-35687 --config="/home/udeployha/.kube/icg-tts-cd-microservice-metis-admin-panel-openshift_config" delete configmap icg-tts-cd-microservice-metis-admin-panel-openshift-middlewareconfig --ignore-not-found
+	if [ -d "ConfigMaps/$folder/COB" ]
+	then
+		echo "check create config map --from-file=ConfigMaps/$folder/COB"
+		oc -n=icg-tts-citidirect-35687 --config="/home/udeployha/.kube/icg-tts-cd-microservice-metis-admin-panel-openshift_config" create configmap icg-tts-cd-microservice-metis-admin-panel-openshift-middlewareconfig --from-file=ConfigMaps/$folder/COB
+	else
+		echo "check create config map --from-file=ConfigMaps/$folder"
+		oc -n=icg-tts-citidirect-35687 --config="/home/udeployha/.kube/icg-tts-cd-microservice-metis-admin-panel-openshift_config" create configmap icg-tts-cd-microservice-metis-admin-panel-openshift-middlewareconfig --from-file=ConfigMaps/$folder
+	fi
+else 
+echo "No Config Maps folder exist, exit 1"
+fi
+done
+ 
+-------------------------------
+working directory: /opt/udeployha/agent/var/work/icg-tts-cd-microservice-metis-admin-panel-openshift
+===============================
+command output: 
+Login successful.
+ 
+You have one project on this server: "icg-tts-citidirect-35687"
+ 
+Using project "icg-tts-citidirect-35687".
+Already on project "icg-tts-citidirect-35687" on server "https://namicgswd11p-webapi.nam.nsroot.net:8443".
+Creating Config Maps for AppConfig
+configmap "icg-tts-cd-microservice-metis-admin-panel-openshift-appconfig" deleted
+check create config map --from-file=ConfigMaps/AppConfig
+configmap/icg-tts-cd-microservice-metis-admin-panel-openshift-appconfig created
+===============================
+command exit code: 0
+
+================================================================================================================================================================
+Promote Image:
+
+_input="${p:OS_PARAMETER_FILE}"
+
+
+if [ -f "$_input" ]; then
+while IFS='=' read -r property value; do
+        if [[ $property == IMAGE ]]; then
+        IMAGE_NAME=`echo $value |cut -d/ -f 2-3`
+        echo $IMAGE_NAME
+        curl -XGET "http://earswebservices.nam.nsroot.net:8080/ear-web-services/PromoteArtifact?fromArtifactPath=${p:ART_SOURCE_REPO}/"$IMAGE_NAME"&ctcId=168794&ctcVersionId=168794&approverSOEIds=dc44678&userSOEId=${p:request.user.name}&csiId=${p:CSI ID}&csiVersion=0&orderNumber=${p:request.id}&productName=UCD" -k
+        fi
+done <$_input
+else
+echo "Parameter file $_input is missing"
+exit 1
+fi
+*******************************************************************
+output:
+
+_input="icg-tts-citidirect-35687_citidirect-metis-admin-panel.dat.COB"
+ 
+ 
+if [ -f "$_input" ]; then
+while IFS='=' read -r property value; do
+        if [[ $property == IMAGE ]]; then
+        IMAGE_NAME=`echo $value |cut -d/ -f 2-3`
+        echo $IMAGE_NAME
+        curl -XGET "http://earswebservices.nam.nsroot.net:8080/ear-web-services/PromoteArtifact?fromArtifactPath=docker-icg-test-local/"$IMAGE_NAME"&ctcId=168794&ctcVersionId=168794&approverSOEIds=dc44678&userSOEId=icg_tts_prod&csiId=35687&csiVersion=0&orderNumber=16ffe32d-df15-6516-4a7a-785a73509746&productName=UCD" -k
+        fi
+done <$_input
+else
+echo "Parameter file $_input is missing"
+exit 1
+fi
+-------------------------------
+working directory: /opt/udeployha/agent/var/work/icg-tts-cd-microservice-metis-admin-panel-openshift
+===============================
+command output: 
+tts-citidirect-35687/icg-tts-cd-microservice-metis-admin-panel-openshift:0.3.x-701
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+ 
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+  0     0    0     0    0     0      0      0 --:--:--  0:00:01 --:--:--     0
+  0     0    0     0    0     0      0      0 --:--:--  0:00:02 --:--:--     0
+  0     0    0     0    0     0      0      0 --:--:--  0:00:03 --:--:--     0
+  0     0    0     0    0     0      0      0 --:--:--  0:00:04 --:--:--     0
+  0     0    0     0    0     0      0      0 --:--:--  0:00:05 --:--:--     0
+  0     0    0     0    0     0      0      0 --:--:--  0:00:06 --:--:--     0
+  0     0    0     0    0     0      0      0 --:--:--  0:00:07 --:--:--     0
+  0     0    0     0    0     0      0      0 --:--:--  0:00:08 --:--:--     0
+  0     0    0     0    0     0      0      0 --:--:--  0:00:09 --:--:--     0
+  0     0    0     0    0     0      0      0 --:--:--  0:00:10 --:--:--     0
+  0     0    0     0    0     0      0      0 --:--:--  0:00:11 --:--:--     0
+  0     0    0     0    0     0      0      0 --:--:--  0:00:12 --:--:--     0
+  0     0    0     0    0     0      0      0 --:--:--  0:00:13 --:--:--     0
+  0     0    0     0    0     0      0      0 --:--:--  0:00:14 --:--:--     0
+  0     0    0     0    0     0      0      0 --:--:--  0:00:15 --:--:--     0
+  0     0    0     0    0     0      0      0 --:--:--  0:00:16 --:--:--     0
+  0     0    0     0    0     0      0      0 --:--:--  0:00:17 --:--:--     0
+  0     0    0     0    0     0      0      0 --:--:--  0:00:18 --:--:--     0
+  0     0    0     0    0     0      0      0 --:--:--  0:00:19 --:--:--     0
+  0     0    0     0    0     0      0      0 --:--:--  0:00:20 --:--:--     0
+  0     0    0     0    0     0      0      0 --:--:--  0:00:21 --:--:--     0
+  0     0    0     0    0     0      0      0 --:--:--  0:00:22 --:--:--     0
+  0     0    0     0    0     0      0      0 --:--:--  0:00:23 --:--:--     0
+  0     0    0     0    0     0      0      0 --:--:--  0:00:24 --:--:--     0
+  0     0    0     0    0     0      0      0 --:--:--  0:00:25 --:--:--     0
+  0     0    0     0    0     0      0      0 --:--:--  0:00:26 --:--:--     0{"status":true,"statusDescription":"Promoted the artifact successfully: docker-icg-test-local/tts-citidirect-35687/icg-tts-cd-microservice-metis-admin-panel-openshift:0.3.x-701 to: docker-icg-prod-local/tts-citidirect-35687/icg-tts-cd-microservice-metis-admin-panel-openshift:0.3.x-701 -- isCopy=true, ctcId=168794, ctcVersionId=168794, csiId=35687, csiVersion=0"}
+121   364    0   364    0     0     13      0 --:--:--  0:00:26 --:--:--    79
+===============================
+command exit code: 0
+
+==============================================================================================================================================================
+Create Object From Template and Deploy
+
+#!/bin/bash
+
+EXTRA_ARGS=
+if ! grep '^ENV=' ${p:OS_PARAMETER_FILE}; then
+  EXTRA_ARGS+="ENV="${p:ENV.CATEGORY}""
+fi
+if ! grep '^APP=' ${p:OS_PARAMETER_FILE}; then
+  EXTRA_ARGS+=" APP=${p:OPENSHIFT_APP_NAME}"
+fi
+if ! grep '^PROJECT=' ${p:OS_PARAMETER_FILE}; then
+  EXTRA_ARGS+=" PROJECT=${p:OPENSHIFT_PROJECT_NAME}"
+fi
+if ! grep '^CSIID=' ${p:OS_PARAMETER_FILE}; then
+  EXTRA_ARGS+=" CSIID=${p:CSI ID}"
+fi
+if ! grep '^IMAGE=' ${p:OS_PARAMETER_FILE}; then
+    EXTRA_ARGS+=" IMAGE=${p:ART_TARGET_REPO}.artifactrepository.citigroup.net/${p:OPENSHIFT_PROJECT_NAME}/${p:OPENSHIFT_APP_NAME}:${p:version.name}"
+fi
+if ! grep '^OCP_CLUSTER=' ${p:OS_PARAMETER_FILE}; then
+  CLUSTER=`echo ${p:OPENSHIFT_URL} | sed 's/https:\/\///;s/-webapi.nam.nsroot.net:8443//;s/-webapi.eur.nsroot.net:8443//;s/-webapi.apac.nsroot.net:8443//;s/-webapi.aws.nam.nsroot.net:8443//'`
+  EXTRA_ARGS+=" OCP_CLUSTER=$CLUSTER"
+fi
+
+if [ -z "$EXTRA_ARGS" ]
+then
+      EXTRA_ARGS="Deployment=uDeploy"
+fi
+
+echo "$EXTRA_ARGS"
+
+${p:OPENSHIFT_VERSION} login ${p:OPENSHIFT_URL} -u=${p:OPENSHIFT_FID} -p=${p:OPENSHIFT_FID_PASSWORD} --insecure-skip-tls-verify=true
+
+${p:OPENSHIFT_VERSION} process -p $EXTRA_ARGS --ignore-unknown-parameters -f ${p:OS_TEMPLATE_NAME} `cat ${p:OS_PARAMETER_FILE}` | ${p:OPENSHIFT_VERSION} apply -f -
+
+*********************************************************************
+output:
+
+#!/bin/bash
+ 
+EXTRA_ARGS=
+if ! grep '^ENV=' icg-tts-citidirect-35687_citidirect-metis-admin-panel.dat.COB; then
+  EXTRA_ARGS+="ENV="COB""
+fi
+if ! grep '^APP=' icg-tts-citidirect-35687_citidirect-metis-admin-panel.dat.COB; then
+  EXTRA_ARGS+=" APP=icg-tts-cd-microservice-metis-admin-panel-openshift"
+fi
+if ! grep '^PROJECT=' icg-tts-citidirect-35687_citidirect-metis-admin-panel.dat.COB; then
+  EXTRA_ARGS+=" PROJECT=icg-tts-citidirect-35687"
+fi
+if ! grep '^CSIID=' icg-tts-citidirect-35687_citidirect-metis-admin-panel.dat.COB; then
+  EXTRA_ARGS+=" CSIID=35687"
+fi
+if ! grep '^IMAGE=' icg-tts-citidirect-35687_citidirect-metis-admin-panel.dat.COB; then
+    EXTRA_ARGS+=" IMAGE=docker-icg-prod-local.artifactrepository.citigroup.net/icg-tts-citidirect-35687/icg-tts-cd-microservice-metis-admin-panel-openshift:701"
+fi
+if ! grep '^OCP_CLUSTER=' icg-tts-citidirect-35687_citidirect-metis-admin-panel.dat.COB; then
+  CLUSTER=`echo https://namicgswd11p-webapi.nam.nsroot.net:8443 | sed 's/https:\/\///;s/-webapi.nam.nsroot.net:8443//;s/-webapi.eur.nsroot.net:8443//;s/-webapi.apac.nsroot.net:8443//;s/-webapi.aws.nam.nsroot.net:8443//'`
+  EXTRA_ARGS+=" OCP_CLUSTER=$CLUSTER"
+fi
+ 
+if [ -z "$EXTRA_ARGS" ]
+then
+      EXTRA_ARGS="Deployment=uDeploy"
+fi
+ 
+echo "$EXTRA_ARGS"
+ 
+oc -n=icg-tts-citidirect-35687 --config="/home/udeployha/.kube/icg-tts-cd-microservice-metis-admin-panel-openshift_config" login https://namicgswd11p-webapi.nam.nsroot.net:8443 -u=35687_ucd_prod -p=**** --insecure-skip-tls-verify=true
+ 
+oc -n=icg-tts-citidirect-35687 --config="/home/udeployha/.kube/icg-tts-cd-microservice-metis-admin-panel-openshift_config" process -p $EXTRA_ARGS --ignore-unknown-parameters -f icg-tts-citidirect-35687_citidirect-metis-admin-panel.json `cat icg-tts-citidirect-35687_citidirect-metis-admin-panel.dat.COB` | oc -n=icg-tts-citidirect-35687 --config="/home/udeployha/.kube/icg-tts-cd-microservice-metis-admin-panel-openshift_config" apply -f -
+-------------------------------
+working directory: /opt/udeployha/agent/var/work/icg-tts-cd-microservice-metis-admin-panel-openshift
+===============================
+command output: 
+ENV=cob
+APP=metis-admin-panel
+IMAGE=docker-icg-prod-local.artifactrepository.citigroup.net/tts-citidirect-35687/icg-tts-cd-microservice-metis-admin-panel-openshift:0.3.x-701
+ PROJECT=icg-tts-citidirect-35687 CSIID=35687 OCP_CLUSTER=namicgswd11p
+Login successful.
+ 
+You have one project on this server: "icg-tts-citidirect-35687"
+ 
+Using project "icg-tts-citidirect-35687".
+deploymentconfig.apps.openshift.io/metis-admin-panel created
+service/metis-admin-panel created
+route.route.openshift.io/metis-admin-panel created
+===============================
+command exit code: 0
+
+==================================================================================================================================================
+Deploy Image and Monitor
+
+${p:OPENSHIFT_VERSION} login ${p:OPENSHIFT_URL} -u=${p:OPENSHIFT_FID} -p=${p:OPENSHIFT_FID_PASSWORD} --insecure-skip-tls-verify=true
+
+${p:OPENSHIFT_VERSION} project ${p:OPENSHIFT_PROJECT_NAME}
+
+${p:OPENSHIFT_VERSION} get dc -l 'app=${p:OPENSHIFT_APP_NAME}' | echo -e "$(sed '1d')" |cut -d" " -f1 > deployconfig.txt
+
+for dc in $(<deployconfig.txt); 
+do
+echo $dc
+echo "Deployment starts $(date)"
+${p:OPENSHIFT_VERSION} rollout latest dc/$dc
+echo "Deployment log $(date)"
+if ! ${p:OPENSHIFT_VERSION} logs --timestamps -f dc/$dc --loglevel=10; then echo “DEPLOYMENT FAIL $(date)”; echo; ${p:OPENSHIFT_VERSION} describe nodes; echo; ${p:OPENSHIFT_VERSION} get rc –o yaml --loglevel=10; echo; ${p:OPENSHIFT_VERSION} get events; echo; sleep 30; ${p:OPENSHIFT_VERSION} logs --timestamps -f dc/$dc --loglevel=10; fi;
+done
+
+*********************************************************************
+output:
+oc -n=icg-tts-citidirect-35687 --config="/home/udeployha/.kube/icg-tts-cd-microservice-metis-admin-panel-openshift_config" login https://namicgswd11p-webapi.nam.nsroot.net:8443 -u=35687_ucd_prod -p=**** --insecure-skip-tls-verify=true
+ 
+oc -n=icg-tts-citidirect-35687 --config="/home/udeployha/.kube/icg-tts-cd-microservice-metis-admin-panel-openshift_config" project icg-tts-citidirect-35687
+ 
+oc -n=icg-tts-citidirect-35687 --config="/home/udeployha/.kube/icg-tts-cd-microservice-metis-admin-panel-openshift_config" get dc -l 'app=icg-tts-cd-microservice-metis-admin-panel-openshift' | echo -e "$(sed '1d')" |cut -d" " -f1 > deployconfig.txt
+ 
+for dc in $(<deployconfig.txt); 
+do
+echo $dc
+echo "Deployment starts $(date)"
+oc -n=icg-tts-citidirect-35687 --config="/home/udeployha/.kube/icg-tts-cd-microservice-metis-admin-panel-openshift_config" rollout latest dc/$dc
+echo "Deployment log $(date)"
+if ! oc -n=icg-tts-citidirect-35687 --config="/home/udeployha/.kube/icg-tts-cd-microservice-metis-admin-panel-openshift_config" logs --timestamps -f dc/$dc --loglevel=10; then echo “DEPLOYMENT FAIL $(date)”; echo; oc -n=icg-tts-citidirect-35687 --config="/home/udeployha/.kube/icg-tts-cd-microservice-metis-admin-panel-openshift_config" describe nodes; echo; oc -n=icg-tts-citidirect-35687 --config="/home/udeployha/.kube/icg-tts-cd-microservice-metis-admin-panel-openshift_config" get rc –o yaml --loglevel=10; echo; oc -n=icg-tts-citidirect-35687 --config="/home/udeployha/.kube/icg-tts-cd-microservice-metis-admin-panel-openshift_config" get events; echo; sleep 30; oc -n=icg-tts-citidirect-35687 --config="/home/udeployha/.kube/icg-tts-cd-microservice-metis-admin-panel-openshift_config" logs --timestamps -f dc/$dc --loglevel=10; fi;
+done
+-------------------------------
+working directory: /opt/udeployha/agent/var/work/icg-tts-cd-microservice-metis-admin-panel-openshift
+===============================
+command output: 
+Login successful.
+ 
+You have one project on this server: "icg-tts-citidirect-35687"
+ 
+Using project "icg-tts-citidirect-35687".
+Already on project "icg-tts-citidirect-35687" on server "https://namicgswd11p-webapi.nam.nsroot.net:8443".
+No resources found.
+===============================
+command exit code: 0
+
+===========================================================================================================================================================
+Openshift Rollout Validation:
+
+${p:OPENSHIFT_VERSION} rollout status deploymentconfig validationengine-startup-service-dc --watch
