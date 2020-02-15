@@ -1,0 +1,17 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: tomcat-new
+  labels:
+    app: tomcat-new
+    app.kubernetes.io/component: tomcat-new
+    app.kubernetes.io/instance: tomcat-new
+spec:
+  ports:
+    - name: tomcat-port
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: tomcat-new
+  type: ClusterIP

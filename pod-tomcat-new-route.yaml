@@ -1,0 +1,15 @@
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: tomcat-new
+  labels:
+    app: tomcat-new
+    app.kubernetes.io/component: tomcat-new
+    app.kubernetes.io/instance: tomcat-new
+spec:
+  path: /jenkins
+  to:
+    kind: Service
+    name: tomcat-new
+  port:
+    targetPort: 8080
