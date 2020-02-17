@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: tomcat-new-template
+  labels:
+    name: tomcat-new-template
+  annotations:
+    description: Template for Secrets for the Container Gateway
+objects:
+  - apiVersion: v1
+    kind: Pod
+    metadata:
+      name: tomcat-new
+      labels:
+        app: tomcat-new
+      namespace: dacpac
+    spec: 
+      containers:
+        - name: tomcat-new
+          image: raviteja101/new-tomcat
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          imagePullPolicy: Always

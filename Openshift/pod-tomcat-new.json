@@ -1,0 +1,29 @@
+{
+  "kind": "Pod",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "tomcat-new",
+    "creationTimestamp": null,
+    "labels": {
+      "app": "tomcat-new"
+    }
+  },
+  "spec": {
+    "containers": [
+      {
+        "name": "tomcat-new",
+        "image": "raviteja101/new-tomcat",
+        "ports": [
+          {
+            "containerPort": 8080,
+            "protocol": "TCP"
+          }
+        ],
+        "resources": {},
+        "imagePullPolicy": "Always"
+      }
+    ],
+    "serviceAccount": ""
+  },
+  "status": {}
+}

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Pod
+metadata:
+   name: tomcat
+spec:
+   containers:
+    - name: tomcat
+      image: tomcat:8.0
+      ports:
+        - containerPort: 7500
+      imagePullPolicy: Always
+    - name: database
+      image: bitnami/mongodb
+      Ports:
+        - containerPort: 7501
+      imagePullPolicy: Always

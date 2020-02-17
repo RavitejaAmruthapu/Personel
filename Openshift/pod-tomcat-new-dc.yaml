@@ -1,0 +1,32 @@
+kind: "DeploymentConfig"
+apiVersion: "v1"
+metadata:
+  name: "tomcat-dc"
+spec:
+  template: 
+    metadata:
+      labels:
+        name: "tomcat-dc"
+    spec:
+      containers:
+        - name: "tomcat-con"
+          image: "raviteja101/new-tomcat"
+          ports:
+            - containerPort: 8080
+              protocol: "TCP"
+  replicas: 5 
+  triggers:
+    - type: "ConfigChange" 
+    - type: "ImageChange" 
+      imageChangeParams:
+        automatic: true
+        containerNames:
+          - "tomcat-con"
+        from:
+          kind: "ImageStreamTag"
+          name: "new-tomcat:latest"
+  strategy: 
+    type: "Rolling"
+  paused: false 
+  revisionHistoryLimit: 2 
+  minReadySeconds: 0

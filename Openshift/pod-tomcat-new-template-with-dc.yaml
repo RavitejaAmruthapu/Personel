@@ -1,0 +1,66 @@
+kind: "Template"
+apiVersion: "v1"
+metadata:
+  name: tomcat-template
+  labels:
+    template: "tomcat-template"
+    app: "tomcat-template"
+objects:
+  - kind: "DeploymentConfig"
+    apiVersion: "v1"
+    metadata:
+      name: "tomcat-dc"
+    spec:
+      template:
+        metadata:
+          labels:
+            name: "tomcat-dc"
+            app: "tomcat-dc"
+        spec:
+          containers:
+            - name: "tomcat-con"
+              image: "raviteja101/new-tomcat"
+              ports:
+                - containerPort: 8080
+                  protocol: "TCP"
+      replicas: 5
+      strategy:
+        type: "Rolling"
+      selector:
+        app: tomcat-dc
+      paused: false
+      revisionHistoryLimit: 2
+      minReadySeconds: 0
+  - kind: Service
+    apiVersion: v1
+    metadata:
+      name: tomcat-service
+      labels:
+        app: tomcat-service
+        app.kubernetes.io/component: tomcat-new
+        app.kubernetes.io/instance: tomcat-new
+    namespace: dacpac
+    spec:
+      ports:
+        - name: tomcat-port
+          protocol: TCP
+          port: 8080
+          targetPort: 8080
+      selector:
+        app: tomcat-dc
+      type: ClusterIP
+  - kind: Route
+    apiVersion: route.openshift.io/v1
+    metadata:
+      name: tomcat-route
+      labels:
+        app: tomcat-route
+        app.kubernetes.io/component: tomcat-new
+        app.kubernetes.io/instance: tomcat-new
+    spec:
+      path: /jenkins
+      to:
+        kind: Service
+        name: tomcat-service
+      port:
+        targetPort: 8080

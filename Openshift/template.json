@@ -1,0 +1,318 @@
+{
+	"kind": "Template",
+	"apiVersion": "v1",
+	"metadata": {
+		"name": "${APP}_template"
+	},
+	"objects": [
+		{
+			"kind": "DeploymentConfig",
+			"apiVersion": "v1",
+			"metadata": {
+				"labels": {
+					"app": "${APP}",
+					"citi.app-base-image-product": "oracle-jre-rhel7",
+					"citi.csi-id": "35687",
+					"citi.installed-product-versions": "rhel7_oraclejre_1.8.0_7",
+					"citi.installed-ctc-version-ids": "1807",
+					"citi.app-log-format": "fixedwidth"
+				},
+				"name": "${SERVICE_NAME}",
+				"generation": 1,
+				"annotations": {
+					"openshift.io/generated-by": "OpenShiftNewApp"
+				}
+			},
+			"spec": {
+				"strategy": {
+					"type": "Rolling",
+					"rollingParams": {
+						"updatePeriodSeconds": 1,
+						"intervalSeconds": 1,
+						"timeoutSeconds": 600,
+						"maxUnavailable": "25%",
+						"maxSurge": "25%"
+					},
+					"resources": {
+						
+					},
+					"activeDeadlineSeconds": 21600
+				},
+				"triggers": [
+					{
+						"type": "ConfigChange"
+					}
+				],
+				"replicas": "${{REPLICAS}}",
+				"revisionHistoryLimit": 2,
+				"test": false,
+				"selector": {
+					"app": "${APP}",
+					"version": "v1",
+					"deploymentconfig": "${SERVICE_NAME}"
+				},
+				"template": {
+					"metadata": {
+						"labels": {
+							"app": "${APP}",
+							"version": "v1",
+							"deploymentconfig": "${SERVICE_NAME}"
+						},
+						"annotations": {
+                            "ecs.o2c/enable": "${SERVICE_NAME}",
+                            "ecs.o2c/${SERVICE_NAME}.secrets": "${SECRET}",
+                            "ecs.o2c/${SERVICE_NAME}.certificates": "${CERT}"
+						}
+					},
+					"spec": {
+						"volumes": [
+							{
+								"name": "app-config",
+								"configMap": {
+									"name": "${APPCONFIGNAME}",
+									"defaultMode": 420
+								}
+							}
+						],
+						"containers": [
+							{
+								"name": "${SERVICE_NAME}",
+								"image": "${IMAGE}",
+								"port": [
+									{
+										"containerPort": 20000,
+										"protocol": "TCP"
+									},
+									{
+										"containerPort": 8080,
+										"protocol": "TCP"
+									}
+								],
+								"readinessProbe": {
+									"failureThreshold": 10,
+                                    "httpGet": {
+                                        "path": "manage/health",
+                                        "port": 8090,
+                                        "scheme": "HTTPS"
+                                    },
+									"initialDelaySeconds": 260,
+									"periodSeconds": 10,
+									"timeoutSeconds": 1,
+									"successThreshold": 1
+                                },
+								"resources": {
+									"limits": {
+										"cpu": "${CPUMAX}",
+										"memory": "${MEMORYMAX}"
+									},
+									"requests": {
+										"cpu": "${CPUMIN}",
+										"memory": "${MEMORYMIN}"
+									}
+								},
+								"env": [
+									{
+										"name": "ENV_NAME",
+										"value": "${ENV}"
+									},
+									{
+										"name": "ENV",
+										"value": "${ENV}"
+									},
+									{
+										"name": "ENVIRONMENT",
+										"value": "${ENVIRONMENT}"
+									},
+									{
+										"name": "APP",
+										"value": "${APP}"
+									},
+									{
+										"name": "SERVER_ORDER_ID",
+										"value": "${SERVER_ORDER_ID}"
+									},
+									{
+										"name": "KEYSTORE_SECRET",
+										"value": "${KEYSTORE_SECRET}"
+									},                                    
+									{
+										"name": "TRUSTSTORE_SECRET",
+										"value": "${TRUSTSTORE_SECRET}"
+									},
+									{
+										"name": "APPDYNAMICSAPPNAME",
+										"value": "${APPDYNAMICSAPPNAME}"
+									},
+									{
+										"name": "APPDYNAMICSACCTACCESSKEY",
+										"value": "${APPDYNAMICSACCTACCESSKEY}"
+									},
+									{
+										"name": "APPDHOSTNAME",
+										"value": "${APPDHOSTNAME}"
+									}
+								],
+								"volumeMounts": [
+									{
+										"name": "app-config",
+										"mountPath": "${APPCONFIGPATH}"
+									}
+								],
+								"terminationMessagePath": "/dev/termination-log",
+								"imagePullPolicy": "IfNotPresent"
+							}
+						],
+						"restartPolicy": "Always",
+						"terminationGracePeriodSeconds": 30,
+						"dnsPolicy": "ClusterFirst",
+						"securityContext": {
+							
+						}
+					}
+				}
+			}
+		},
+		{
+			"kind": "Service",
+			"apiVersion": "v1",
+			"metadata": {
+				"name": "${SERVICE_NAME}",
+				"labels": {
+					"app": "${APP}"
+				},
+				"annotations": {
+					"openshift.io/generated-by": "OpenShiftNewApp"
+				}
+			},
+			"spec": {
+				"ports": [
+					{
+						"name": "8080-tcp",
+						"protocol": "TCP",
+						"port": 8080,
+						"targetPort": 8080
+					},
+					{
+						"name": "20000-tcp",
+						"protocol": "TCP",
+						"port": 20000,
+						"targetPort": 20000
+					}
+				],
+				"selector": {
+					"app": "${APP}",
+					"deploymentconfig": "${SERVICE_NAME}"
+				},
+				"type": "ClusterIP",
+				"sessionAffinity": "None"
+			}
+		}
+	],
+	"parameters": [
+		{
+			"name": "APP",
+			"description": "The name assigned to App",
+			"required": true
+		},
+		{
+			"name": "SERVICE_NAME",
+			"description": "The name assigned to Service.  This must be all lowercase alphanumeric.  Allowed special characters -.",
+			"required": true
+		},
+		{
+			"name": "ENV",
+			"description": "The deployment Environment",
+			"required": true
+		},
+		{
+			"name": "ENVIRONMENT",
+			"description": "The deployment Environment",
+			"required": true
+		},
+		{
+			"name": "IMAGE",
+			"description": "The name of the image to be used for the deployment for the project",
+			"required": true
+		},
+		{
+			"name": "REPLICAS",
+			"description": "No of Replicas to be deployed",
+			"required": true
+		},
+		{
+			"name": "CPUMIN",
+			"description": "Minimum cpu limit",
+			"required": true
+		},
+		{
+			"name": "CPUMAX",
+			"description": "Maximum cpu limit",
+			"required": true
+		},
+		{
+			"name": "MEMORYMIN",
+			"description": "Mimimum memory limit",
+			"required": true
+		},
+		{
+			"name": "MEMORYMAX",
+			"description": "Maximum memory limit",
+			"required": true
+		},
+		{
+			"name": "APPS_DOMAIN_SUFFIX",
+			"description": "The default domain suffix that will be used when creating routes, i.e. <SERVICE_NAME>.<APPS_DOMAIN_SUFFIX>",
+			"required": true
+		},
+		{
+			"name": "SECRET",
+			"description": "the secret information",
+			"required": true
+		},
+		{
+			"name": "CERT",
+			"description": "the certificate",
+			"required": true
+		},
+		{
+			"name": "APPCONFIGNAME",
+			"description": "Config map file name",
+			"required": true
+		},
+		{
+			"name": "APPCONFIGPATH",
+			"description": "config map file path",
+			"required": true
+		},
+		{
+			"name": "SERVER_ORDER_ID",
+			"description": "Certificate Server Order Id",
+			"required": true
+		},
+		{
+			"name": "KEYSTORE_SECRET",
+			"description": "keystore secret",
+			"required": true
+		},
+        {
+			"name": "TRUSTSTORE_SECRET",
+			"description": "keystore secret",
+			"required": true
+		},
+        {
+            "name": "APPDYNAMICSAPPNAME",
+            "description": "the app dynamics application name",
+            "required": true
+        }, 
+        {
+            "name": "APPDYNAMICSACCTACCESSKEY",
+            "description": "app dynamics access key",
+            "required": true
+        },
+        {
+            "name": "APPDHOSTNAME",
+            "description": "app dynamics host name",
+            "required": true
+        }
+	]
+}

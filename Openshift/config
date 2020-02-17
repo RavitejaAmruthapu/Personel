@@ -1,0 +1,18 @@
+apiVersion: v1
+clusters:
+- cluster:
+    server: https://api.us-west-2.starter.openshift-online.com:6443
+  name: api-us-west-2-starter-openshift-online-com:6443
+contexts:
+- context:
+    cluster: api-us-west-2-starter-openshift-online-com:6443
+    namespace: test123456
+    user: raviteja_101/api-us-west-2-starter-openshift-online-com:6443
+  name: test123456/api-us-west-2-starter-openshift-online-com:6443/raviteja_101
+current-context: test123456/api-us-west-2-starter-openshift-online-com:6443/raviteja_101
+kind: Config
+preferences: {}
+users:
+- name: raviteja_101/api-us-west-2-starter-openshift-online-com:6443
+  user:
+    token: 0_V33UIrTLLkwxwfpuX7gvByxrNiIZa2trutrsXbGYM

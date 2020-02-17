@@ -1,0 +1,14 @@
+{
+   "kind": "Route",
+   "apiVersion": "v1",
+   "metadata": {"name": "myjenkins-service-route"},
+   "spec": {
+      "host": "apps.us-west-2.starter.openshift-online.com",
+	  "path": "/jenkins"
+      "to": {
+         "kind": "Service",
+         "name": "myjenkins-service"
+      },
+      "tls": {"termination": "edge"}
+   }
+}
