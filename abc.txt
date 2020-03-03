@@ -1,52 +1,50 @@
-CI/CD:
-------------
-Regular Build ---If succeded then
--------------------------------------------
-UAT Pipeline Build-- changeticket.out, udeploylabel.out
-(adding 3 more steps along with normal steps
-Export uDeploy Label as Artifact --echo %env.uDeployLabel% > udeploylabel.out
-Inject Change Ticket to Pipeline--echo %ChangeTicket% > changeticket.out
-Tagging- tagging buils.ps1 -buildId %teamcity.build.id% -username %tagging_user% -password %tagging_pwd% -URL %Teamcity_URL% -Tag %Tag_name%
-)
-----------------------------------------------------------
-Auto Deployments :: Auto deployments DIT
-(triggered-Finished build [CSI: 35687] SS_Files(AFRD) :: SS_AFRD(UAT Pipeline),)
-(taking the artifact depedencies from Pipeline tagged preveious build [CSI: 35687] SS_Files(AFRD) :: SS_AFRD(UAT Pipeline), udeploylabel.out changeticket.out)
-(Read udeployLabel $lbl=gc ./udeploylabel.out-echo "##teamcity[setParameter name='env.uDeployLabel' value='$lbl']", Deploy to DIT python autoDeploy-pipeline.py "Payments - State Street Cash Manager" %ComponentProcessStep% "DIT" %uDeploy_Username% %udeploy_pwd% %env.uDeployLabel% %ComponentName% %changenumber% %receiveremail%, Add Delay Write-Host "Waiting for few seconds .. "- Start-Sleep -Seconds 5, Tagging -buildId %teamcity.build.id% -username %tagging_user% -password %tagging_pwd% -URL %Teamcity_URL% -Tag %Tag_name%)
----------------------------------------------------------------------------------------------------------
-[CSI: 35687] BE1.3 ABW :: Automated Tests :: DIT :: Validation
-(triggered-Finished build [CSI: 35687] SS_Files(AFRD) :: Auto Deployments :: Auto deployments DIT)
-(no dependencies)
-(Run Test(Maven clean Test), Gating Test (Global Payment/GatingJunitReport/MultipleJunitReport.ps1, -xml "%Gating_CDBE%" -percent 30),Kill Stale Objects (TASKKILL /F /IM IEDriverServer.exe
-TASKKILL /F /IM chromedriver.exe
-TASKKILL /F /IM chrome.exe
-TASKKILL /F /IM iexplore.exe
-IF %%ERRORLEVEL%% EQU 128 (
-   ECHO No errors occurred, There was no Driver EXE stale.
-  EXIT 0
-)))
-----------------------------------------------------------------------------
-Automatic Deployment-Gate : SIT Deployment (Auxillary Build) New
-(triggered-Finished build [CSI: 35687] BE1.3 ABW :: Automated Tests :: DIT :: Validation)
-(taking the artifact depedencies from Pipeline tagged preveious build [CSI: 35687] BE1.3 ABW :: Automatic Deployment :: Automatic Deployment DIT, changeticket.out)
-(checking sonar result -Method GET -ProjectKey %SonarProjectKey%, check test builds -userid %APIUSER% -password %APIPassword% -buildTypeID %TestBuilds%, Print uDeploy Label Write-Host %env.uDeployLabel%=%dep.icg_Tts_35687_Csi35687be13abw_AutomaticDeployment_AutomaticDeployment.env.uDeployLabel%, Tagging -buildId %teamcity.build.id% -username %tagging_user% -password %tagging_pwd% -URL %Teamcity_URL% -Tag %Tag_name%)
-------------------------------------------------------------
-Automatic Deployment - SIT5
-(triggered-Finished build [CSI: 35687] BE1.3 ABW :: Automatic Deployment :: Gate : SIT Deployment (Auxillary Build) New)
-(taking the artifact depedencies from Pipeline tagged preveious build [CSI: 35687] BE1.3 ABW :: Automatic Deployment :: Gate : SIT Deployment (Auxillary Build) New, changeticket.out)
-("python autoDeploy-pipeline.py "%uDeploy_Application_name%" %ComponentProcessStep% "%uDeploy_environment%" %uDeploy_Username% %udeploy_pwd% %env.uDeployLabel% %ComponentName% %changenumber% %receiveremail%", Add delay(Write-Host "Waiting for few seconds .. ",Start-Sleep -Seconds 5), Tagging -buildId %teamcity.build.id% -username %tagging_user% -password %tagging_pwd% -URL %Teamcity_URL% -Tag %Tag_name%)
---------------------------------------------
-Automated Tests-8.1-SIT-Acceptence Test-Execute Test
-(triggered [CSI: 35687] BE1.3 ABW :: Automatic Deployment :: Automatic Deployment - SIT5)
-(Added maven step or XML Report processing in build features)
-----------------------------------------------------------------
-Gate : UAT Deployment (Auxillary Build):
-(triggered-Finished build [CSI: 35687] BE1.3 ABW :: Automated Tests :: 8.1 :: SIT :: Functional Test :: Execute Test)
-(taking the artifact depedencies from Pipeline tagged preveious build [CSI: 35687] BE1.3 ABW :: Automatic Deployment :: Automatic Deployment - SIT5, changeticket.out)
-(-userid %APIUSER% -password %APIPassword% -buildTypeID %TestBuilds%,  Print udeploy label Write-Host %env.uDeployLabel%, Taggeing the build -buildId %teamcity.build.id% -username %tagging_user% -password %tagging_pwd% -URL %Teamcity_URL% -Tag %Tag_name%)
------------------------------------------------------------
-Automatic Deployment - UAT:
-(triggered-scheduled trigger(based on time it will enabled and triggered)
-(taking the artifact depedencies from preveious build [CSI: 35687] BE1.3 ABW :: Automatic Deployment :: Gate : UAT Deployment (Auxillary Build))
-(assaign change ticket to parameter, "python autoDeploy-pipeline.py "%uDeploy_Application_name%" %ComponentProcessStep% "%uDeploy_environment%" %uDeploy_Username% %udeploy_pwd% %env.uDeployLabel% %ComponentName% %changenumber% %receiveremail%", Print deployed label(Write-host %env.uDeployLabel%))
+Work Exper in last 5yrs :
+DevOps Engineer experienced in  DevOps Tools & Processes, Build and Deployment automation processes 
+Having 10-years and 2-Months of IT and DevOps experience 
+Having experience on setting end to end delivery pipeline using various DevOps Tools
+Having experience in handling the DevOps Team as a Lead and worked on complex assignments 
++++++++++++++++++++++
+ORR :
+• Work with architect and designer team to perform cost and benefit analysis for various tool
+upgrades and technology change and consult with senior managers to define future road map
+for various CI/CD Tools
+• Onboard new Applications in CI/CD pipeline and explore opportunity to automate & improve
+Application build and release
+• Perform current-state system analysis and suggest improvements by creating POC for various
+alternative solutions and evaluating the most efficient
+• Capture and document technical, functional, non-functional requirements ,acceptance
+criteria’s and perform testing to ensure the CI/CD pipeline work as expected
+• Provide training to end user of the CI/CD pipeline and participate in defect triage meeting and
+provide solution
+• Provide ongoing support for development & QA teams during entire build & release phase
+and participate in quality reviews for various artifacts
+• Conduct walk-through of the requirements with business, development and QA teams and
+create system-level process flows and sequence diagrams
+• Configure deployments in IBM Urban Code Deploy (uDeploy) which automates the
+deployments starting from DEVELOPMENT environment till PRODUCTION Environments
+being Agile.
+• Design, develop, and implement build and release automation pipeline that enables the CITI
+Operations team to deliver best-in-class services to internal and external users
+• Responsible for integrating CI/CD tools with the internal audit tool LOKI and monitoring the
+performance and activities of CITI Bank online applications using ITRS monitoring tool in
+development, QA, PTE, Pre-Production and Production environment
+• Ensure managing and timely processing of the tickets to meet the SLA coordinating with the
+offshore team and address the escalation of clients over the phone and emails supporting oncall rotation (24x7) for critical production applications build and release 
+TT :
+Teamcity ,Bitbucket,Artifactory,Sonarqube,Maven,uDeploy,ITRS,SNOW,Linux,
+Docker ,Production Support,Testing 
+CN :
+Citi Group 
+CP :
+Citigroup Inc. or Citi (stylized as citi) is an American multinational investment bank and financial services corporation headquartered in New York City. The company was formed by the merger of banking giant Citicorp and financial conglomerate Travelers Group in 1998; however, Travelers was spun off from the company in 2002. Citigroup now owns Citicorp, the holding company for Citibank, as well as several international subsidiaries. Citigroup is ranked 3rd on the list of largest banks in the United States and, alongside JPMorgan Chase, Bank of America, and Wells Fargo, it is one of the Big Four banks of the United States. It is a systemically important financial institution and is on the list of systemically important banks that are too big to fail. It is one of the nine global investment banks in the Bulge Bracket.  
+CA :
+480 WASHINGTON BOULEVARD, , JERSEY CITY, NJ, US, 07310 
+LTI P :
+Teamcity ,Bitbucket,Artifactory,Sonarqube,Maven,uDeploy,ITRS,SNOW,Linux,
+Docker ,Production Support,Testing 
+PS :
+*OSN :
+Abdulsalaam.Khurram@lntinfotech.com 
+PN :
+CITI TTS DevOps 
 
