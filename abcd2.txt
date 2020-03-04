@@ -1,0 +1,5 @@
+DevOps Engineer experienced in DevOps Tools & Processes, Build and Deployment automation processes 
+Having 6-years and 6-Months of IT and DevOps experience 
+Having experience on setting end to end delivery pipeline using various DevOps Tools
+Having experience in implementing Continuous Integration & Continuous Deployment using Jenkins, Teamcity, Ansible and Docker.
+Having experience in creating pods with Openshift & Kubernetes Container Orchestration tool
