@@ -1,0 +1,7 @@
+Id CommandLine
+  -- -----------
+   1 Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System....
+   2 clear
+   3 choco
+   4 choco install git
+   5 clear
