@@ -5,3 +5,4 @@ Id CommandLine
    3 choco
    4 choco install git
    5 clear
+https://docs.microsoft.com/en-in/azure/openshift/
